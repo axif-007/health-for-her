@@ -1,0 +1,64 @@
+# ============================================================
+#  Render Deployment Config
+#  This file is read by Render to deploy both services
+#  from a single GitHub repository.
+# ============================================================
+
+services:
+  # ── Backend (FastAPI) ──────────────────────────────────────
+  - type: web
+    name: health-for-her-backend
+    runtime: python
+    region: singapore
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: health-for-her-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: FRONTEND_URL
+        sync: false        # You will fill this in after frontend deploys
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+
+  # ── Frontend (React / Vite) ────────────────────────────────
+  - type: web
+    name: health-for-her-frontend
+    runtime: static
+    region: singapore
+    plan: free
+    rootDir: frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    headers:
+      - path: /*
+        name: Cache-Control
+        value: no-cache
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false        # You will fill in backend URL after it deploys
+
+# ── PostgreSQL Database ────────────────────────────────────────
+databases:
+  - name: health-for-her-db
+    region: singapore
+    plan: free
