@@ -74,9 +74,14 @@ app.include_router(telegram.router)
 app.include_router(google_fit.router)
 
 from scheduler import start_scheduler, stop_scheduler
+from seed import seed
 
 @app.on_event("startup")
 async def startup_event():
+    try:
+        seed()
+    except Exception as e:
+        print(f"Startup seed notice: {e}")
     start_scheduler()
 
 @app.on_event("shutdown")
