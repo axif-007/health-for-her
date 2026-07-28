@@ -13,6 +13,7 @@ const NAV_ITEMS = [
   { path: '/mood', label: 'Mood Tracker', icon: '😊' },
   { path: '/symptoms', label: 'Symptom Tracker', icon: '🌡️' },
   { path: '/sleep', label: 'Sleep Tracker', icon: '🌙' },
+  { path: '/breathing', label: 'Breathing Exercises', icon: '🌬️' },
   { path: '/journal', label: 'Health Journal', icon: '📖' },
   { path: '/ai-assistant', label: 'AI Assistant', icon: '🤖' },
   { path: '/reports', label: 'Reports', icon: '📊' },

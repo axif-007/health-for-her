@@ -27,6 +27,7 @@ const Reports = lazy(() => import('./pages/Reports'))
 const Settings = lazy(() => import('./pages/Settings'))
 const About = lazy(() => import('./pages/About'))
 const AIAssistant = lazy(() => import('./pages/AIAssistant'))
+const Breathing = lazy(() => import('./pages/Breathing'))
 
 const PageLoader = () => (
   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', flexDirection: 'column', gap: '16px' }}>
@@ -72,6 +73,7 @@ function AppRoutes() {
           <Route path="/reports" element={<Reports />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/ai-assistant" element={<AIAssistant />} />
+          <Route path="/breathing" element={<Breathing />} />
           <Route path="/about" element={<About />} />
         </Route>
 
