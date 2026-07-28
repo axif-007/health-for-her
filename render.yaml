@@ -23,6 +23,8 @@ services:
           property: connectionString
       - key: SECRET_KEY
         generateValue: true
+      - key: BACKEND_URL
+        value: https://health-for-her-backend.onrender.com
       - key: FRONTEND_URL
         sync: false        # You will fill this in after frontend deploys
       - key: CLOUDINARY_CLOUD_NAME
