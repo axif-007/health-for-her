@@ -173,7 +173,7 @@ export default function Settings() {
             </div>
           ) : (
             <div style={{ marginBottom: '30px' }}>
-              <a href="http://localhost:8001/api/fit/login" style={{ textDecoration: 'none' }}>
+              <a href={`${axios.defaults.baseURL || ''}/api/fit/login`} style={{ textDecoration: 'none' }}>
                 <button className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', background: '#fff', color: '#333', border: '1px solid #ccc' }}>
                   <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="G" style={{ width: 18 }} />
                   Connect Google Fit
