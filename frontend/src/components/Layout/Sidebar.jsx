@@ -12,6 +12,7 @@ const NAV_ITEMS = [
   { path: '/recovery', label: 'Recovery Progress', icon: '📈' },
   { path: '/mood', label: 'Mood Tracker', icon: '😊' },
   { path: '/symptoms', label: 'Symptom Tracker', icon: '🌡️' },
+  { path: '/period', label: 'Cycle Companion 🌸', icon: '🩸' },
   { path: '/sleep', label: 'Sleep Tracker', icon: '🌙' },
   { path: '/breathing', label: 'Breathing Exercises', icon: '🌬️' },
   { path: '/journal', label: 'Health Journal', icon: '📖' },

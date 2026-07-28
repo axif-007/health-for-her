@@ -51,7 +51,7 @@ app.mount("/uploads", StaticFiles(directory=uploads_dir), name="uploads")
 from routers import (
     auth, dashboard, medicines, water, meals, mood,
     symptoms, sleep, journal, recovery, gallery,
-    timeline, achievements, settings, ai_assistant, schedule, telegram, google_fit
+    timeline, achievements, settings, ai_assistant, schedule, telegram, google_fit, period
 )
 
 app.include_router(auth.router)
@@ -72,6 +72,7 @@ app.include_router(ai_assistant.router)
 app.include_router(schedule.router)
 app.include_router(telegram.router)
 app.include_router(google_fit.router)
+app.include_router(period.router)
 
 from scheduler import start_scheduler, stop_scheduler
 from seed import seed

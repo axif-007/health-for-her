@@ -373,3 +373,25 @@ class QuoteOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+# ─── Period / Cycle Companion ──────────────────────────────────────────────────
+class PeriodLogCreate(BaseModel):
+    start_date: date
+    end_date: Optional[date] = None
+    cycle_length: Optional[int] = 28
+    period_length: Optional[int] = 5
+    flow_intensity: Optional[str] = "medium"
+    cramps_level: Optional[int] = 0
+    mood: Optional[str] = None
+    notes: Optional[str] = None
+
+
+class PeriodLogOut(PeriodLogCreate):
+    id: int
+    user_id: int
+    created_at: Optional[datetime]
+
+    class Config:
+        from_attributes = True
+

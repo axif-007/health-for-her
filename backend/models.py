@@ -368,3 +368,22 @@ class DailyMetrics(Base):
     sleep_minutes = Column(Integer, default=0)
 
     user = relationship("User")
+
+
+# ─── Period / Cycle Companion ──────────────────────────────────────────────────
+class PeriodLog(Base):
+    __tablename__ = "period_logs"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    start_date = Column(Date, nullable=False, index=True)
+    end_date = Column(Date, nullable=True)
+    cycle_length = Column(Integer, default=28)
+    period_length = Column(Integer, default=5)
+    flow_intensity = Column(String, default="medium")  # light / medium / heavy
+    cramps_level = Column(Integer, default=0)        # 0-5 scale
+    mood = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
+    created_at = Column(DateTime, server_default=func.now())
+
+    user = relationship("User")
+
