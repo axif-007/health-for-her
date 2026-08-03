@@ -4,7 +4,7 @@ from database import get_db
 from dependencies import get_current_user
 import models
 from schemas import UserOut
-from services.telegram_service import get_chat_id_from_updates, send_telegram_message
+from services.telegram_service import get_all_chat_ids_from_updates, send_telegram_message
 
 router = APIRouter(prefix="/api/telegram", tags=["telegram"])
 
@@ -15,41 +15,37 @@ async def link_telegram_account(
     current_user: models.User = Depends(get_current_user)
 ):
     """
-    Links the user's Telegram account by fetching the latest updates from the bot
-    and extracting the chat_id. Requires the user to provide the bot token.
+    Links Telegram chats by fetching all chat IDs that have messaged the bot
+    and broadcasting notifications to all linked devices.
     """
     if not bot_token:
         raise HTTPException(status_code=400, detail="Bot token is required")
 
-    chat_id = await get_chat_id_from_updates(bot_token)
+    found_chat_ids = await get_all_chat_ids_from_updates(bot_token)
     
-    if not chat_id:
+    if not found_chat_ids:
         raise HTTPException(
             status_code=404, 
-            detail="Could not find your Telegram chat. Please make sure you sent '/start' to the bot and try again."
+            detail="Could not find any Telegram chat. Please make sure both you and her have sent '/start' to the bot on Telegram and try again."
         )
 
-    # Save to database by appending the new ID if it's not already there
+    # Save to database by merging all unique chat IDs
     existing_ids = current_user.telegram_chat_id.split(",") if current_user.telegram_chat_id else []
-    if chat_id not in existing_ids:
-        existing_ids.append(chat_id)
+    for cid in found_chat_ids:
+        if cid not in existing_ids:
+            existing_ids.append(cid)
         
     current_user.telegram_bot_token = bot_token
     current_user.telegram_chat_id = ",".join(existing_ids)
     db.commit()
     db.refresh(current_user)
 
-    # Send a confirmation message via Telegram only to the newly linked chat
-    success = await send_telegram_message(
-        bot_token, 
-        chat_id, 
-        "🎉 <b>Successfully Linked!</b>\n\nI am Asifa's Recovery Companion Bot! I will now send reminders, love notes, and health tips right here. ❤️"
-    )
-
-    if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Successfully linked in database, but failed to send the confirmation message on Telegram."
+    # Send confirmation message via Telegram to ALL linked chats
+    for cid in existing_ids:
+        await send_telegram_message(
+            bot_token, 
+            cid, 
+            "🎉 <b>Successfully Linked!</b>\n\nI am Asifa's Recovery Companion Bot! Notifications are now live for this phone! ❤️"
         )
 
     return current_user

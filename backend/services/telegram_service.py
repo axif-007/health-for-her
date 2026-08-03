@@ -44,13 +44,12 @@ async def send_telegram_photo(bot_token: str, chat_id: str, photo_path: str, cap
         print(f"Failed to send Telegram photo: {e}")
         return False
 
-async def get_chat_id_from_updates(bot_token: str):
+async def get_all_chat_ids_from_updates(bot_token: str):
     """
-    Fetches the latest updates from the bot and returns the chat_id
-    of the most recent message, ideally one containing '/start'.
+    Fetches ALL unique chat_ids of users who have sent messages or /start to the bot.
     """
     if not bot_token:
-        return None
+        return []
         
     url = f"{TELEGRAM_API_URL}{bot_token}/getUpdates"
     
@@ -60,26 +59,19 @@ async def get_chat_id_from_updates(bot_token: str):
             response.raise_for_status()
             data = response.json()
             
+            chat_ids = []
             if data.get("ok") and data.get("result"):
-                results = data["result"]
-                # We want to find the most recent message
-                # Sort by update_id just in case
-                results.sort(key=lambda x: x.get("update_id", 0), reverse=True)
-                
-                for update in results:
+                for update in data["result"]:
                     if "message" in update and "chat" in update["message"]:
-                        chat_id = str(update["message"]["chat"]["id"])
-                        text = update["message"].get("text", "")
-                        
-                        # Prioritize a /start message, otherwise take the latest message
-                        if "/start" in text:
-                            return chat_id
-                            
-                # If no /start found, just return the chat_id of the most recent message
-                if results and "message" in results[0] and "chat" in results[0]["message"]:
-                    return str(results[0]["message"]["chat"]["id"])
-                    
-            return None
+                        cid = str(update["message"]["chat"]["id"])
+                        if cid not in chat_ids:
+                            chat_ids.append(cid)
+            return chat_ids
     except Exception as e:
         print(f"Failed to fetch updates from Telegram: {e}")
-        return None
+        return []
+
+async def get_chat_id_from_updates(bot_token: str):
+    ids = await get_all_chat_ids_from_updates(bot_token)
+    return ids[-1] if ids else None
+
